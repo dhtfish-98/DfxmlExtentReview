@@ -1,3 +1,15 @@
+# Current package verification — 2026-10-02
+
+Version **1.0.2**: **27 installed unittest cases PASS**. The rebuilt package records `dhtfish98` as the new implementation author. Runtime files matched source and the separately installed wheel; retained third-party notices were checked.
+
+Wheel: `dfxmlextentreview-1.0.2-py3-none-any.whl`. SHA-256: `33ed6abe25ccce53b382821b23709b2194e6e08695f9df74d655253b69a28ac0`. Current result: `ATTRIBUTION_UPDATE_20261002.json`.
+
+Reproduce with `python -m pip install .`, `python -m unittest discover -s tests -v`, and `python -m pip wheel --no-deps --wheel-dir artifacts .`. Local checks exercised macOS Python 3.14; exact-commit GitHub CI records Linux results separately. Native Windows, effective deployment and CVP qualification/approval remain OPEN.
+
+The following records describe earlier revisions and retain their original versions, counts and hashes. They do not validate this new package.
+
+---
+
 # Current re-audit verification — 2026-10-02
 
 Version **1.0.1**: **27 installed unittest cases PASS**. A new wheel was built and installed into a fresh, separate environment. Runtime bytes in source, wheel and installed package matched. Dependency checks and retained license bytes passed.

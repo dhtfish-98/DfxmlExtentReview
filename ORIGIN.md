@@ -2,7 +2,7 @@
 
 Technical source: [dfxml-working-group/dfxml_schema](https://github.com/dfxml-working-group/dfxml_schema) at fixed commit `a80a8619d83ac23c7cd41bd9262be86fcebe3bd8`. License: `LicenseRef-Public-Domain`; the original license text and original copyright notices are preserved.
 
-This is a Codex-assisted implementation of the explicitly selected standalone scope below. It is not presented as original ownership of the upstream algorithms or as a full rewrite of an upstream platform. No source files have merely been renamed into the runtime package.
+New implementation author: **dhtfish98**. This project implements the explicitly selected standalone scope below. It is not presented as original ownership of the upstream algorithms or as a full rewrite of an upstream platform. No source files have merely been renamed into the runtime package.
 
 Scope: DFXML 1.x namespaced fileobject declaration checks: bounded XML elements/depth, entity/DTD rejection, singleton fields, bounded filesize/extents with overlap checks and hash declaration shapes.
 

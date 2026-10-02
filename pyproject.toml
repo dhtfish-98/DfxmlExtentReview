@@ -4,11 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dfxmlextentreview"
-version = "1.0.1"
+version = "1.0.2"
+authors = [{ name = "dhtfish98" }]
 description = "Bounded offline evidence review: DfxmlExtentReview"
 requires-python = ">=3.10"
 license = "MIT"
-license-files = ["LICENSE", "THIRD_PARTY_LICENSE.txt"]
+license-files = ["LICENSE", "THIRD_PARTY_LICENSE.txt", "NEW_IMPLEMENTATION_NOTICE.txt"]
 dependencies = []
 
 [project.scripts]
