@@ -60,10 +60,11 @@
     },
     {
       "path": "src/dfxmlextentreview/core.py",
-      "sha256": "fb158a5aa8b06a263417b44a2057cca404e97e4a9caa1c0508abd9b520a672fd",
-      "bytes": 7991
+      "sha256": "aca38f52f78b5f3ab44f9cd8bb3711b6342d2084ef15a52a32c622dd8bfbcd40",
+      "bytes": 9422
     }
   ],
   "source_review": "The fixed XSD is a format source with local dc/xml schema imports. The new implementation does not resolve schemas or external entities at runtime and does not claim full XSD validation.",
-  "review_boundary": "Complete new runtime review; selected upstream format/entry-point review. Unselected upstream platform code is not claimed audited or rewritten."
+  "review_boundary": "Complete new runtime review; selected upstream format/entry-point review. Unselected upstream platform code is not claimed audited or rewritten.",
+  "current_reaudit": "REAUDIT_20261002.json"
 }

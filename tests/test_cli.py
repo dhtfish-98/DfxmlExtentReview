@@ -34,6 +34,32 @@ class CliTests(unittest.TestCase):
         self.assertEqual(json.loads(r.stdout)["status"], "FAIL")
         self.assertNotIn("Traceback", r.stderr)
 
+    def test_selected_scalar_and_extent_limit_cli(self):
+        from test_review import D
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "record.xml"
+            for raw in (D.replace(b"</filesize>", b"<filesize>bad</filesize></filesize>"), D.replace(b"</hashdigest>", b'<hashdigest type="sha256">bad</hashdigest></hashdigest>'), D.replace(b'img_offset="12"', b'img_offset="9223372036854775807"')):
+                path.write_bytes(raw)
+                result = self.run_cli(path)
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertNotIn("Traceback", result.stderr)
+
+    def test_utf16_entity_transport_and_unknown_encoding_cli(self):
+        from test_review import D, N
+
+        document = '<?xml version="1.0" encoding="UTF-16"?><!DOCTYPE dfxml [<!ENTITY size "4">]><dfxml xmlns="' + N + '" version="1.0"><fileobject><filesize>&size;</filesize></fileobject></dfxml>'
+        cases = [(document.encode(encoding), 1) for encoding in ("utf-16-le", "utf-16-be", "utf-16")]
+        cases.append((b'<?xml version="1.0" encoding="UTF-7"?>' + D, 2))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "encoded.xml"
+            for raw, code in cases:
+                path.write_bytes(raw)
+                result = self.run_cli(path)
+                self.assertEqual(result.returncode, code, result.stdout + result.stderr)
+                self.assertFalse(json.loads(result.stdout)["complete"])
+                self.assertNotIn("Traceback", result.stderr)
+
     def test_read_error_private(self):
         r = self.run_cli(ROOT / "examples/nonexistent_private_path")
         self.assertEqual(r.returncode, 1)
@@ -50,3 +76,33 @@ class CliTests(unittest.TestCase):
         r = self.run_cli(ROOT / "examples/unsupported.bin")
         self.assertEqual(r.returncode, 2, r.stderr + r.stdout)
         self.assertEqual(json.loads(r.stdout)["status"], "OPEN")
+
+    def test_missing_safe_read_flags_never_open(self):
+        import importlib
+        from unittest.mock import patch
+
+        core = importlib.import_module(PACKAGE + ".core")
+        with tempfile.TemporaryDirectory() as directory:
+            link = Path(directory) / "link"
+            link.symlink_to(ROOT / "examples/valid.bin")
+            for flag in ("O_NOFOLLOW", "O_NONBLOCK"):
+                for path in (ROOT / "examples/valid.bin", link):
+                    with patch.object(core.os, flag, None), patch.object(core.os, "open") as opener:
+                        with self.assertRaises(core.Unsupported):
+                            core.read_local(path)
+                        opener.assert_not_called()
+
+    def test_missing_safe_read_flags_cli_open(self):
+        with tempfile.TemporaryDirectory() as directory:
+            link = Path(directory) / "link"
+            link.symlink_to(ROOT / "examples/valid.bin")
+            for flag in ("O_NOFOLLOW", "O_NONBLOCK"):
+                code = "import os; delattr(os, '" + flag + "'); from " + PACKAGE + ".core import main; raise SystemExit(main())"
+                for path in (ROOT / "examples/valid.bin", link):
+                    result = subprocess.run([sys.executable, "-c", code, str(path)], capture_output=True, text=True, timeout=12)
+                    self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                    report = json.loads(result.stdout)
+                    self.assertEqual(report["status"], "OPEN")
+                    self.assertFalse(report["complete"])
+                    self.assertEqual(report["findings"], ["safe_local_read_flags_unavailable"])
+                    self.assertNotIn("Traceback", result.stderr)

@@ -15,9 +15,13 @@ python -m pip install .
 dfxmlextentreview examples/valid.bin
 ```
 
-Supply one local regular file. No symlinks or automatic artifact discovery are accepted. The CLI prints JSON; exit 0 means supported checks completed, exit 1 means a structural failure, and exit 2 means unsupported/incomplete analysis. Each successful read includes the input SHA-256 and byte count. Paths, contents, report messages and identities are suppressed. The input is never modified.
+Supply one local regular file. The file CLI requires OS `O_NOFOLLOW` and `O_NONBLOCK` support; missing safety flags return OPEN before opening the path. This file-reader contract was verified on macOS/Linux; native Windows file reading is outside the validated profile. No symlinks or automatic artifact discovery are accepted. The CLI prints JSON; exit 0 means supported checks completed, exit 1 means a structural failure, and exit 2 means unsupported/incomplete analysis. Each successful read includes the input SHA-256 and byte count. Paths, contents, report messages and identities are suppressed. The input is never modified.
 
 ## Explicit limits and boundaries
+
+XML transport is UTF-8 only, optionally with a UTF-8 BOM. Decoded NUL is rejected before parsing, preventing alternate UTF-16/32 transport from bypassing the DTD/entity guard. Non-UTF8 encoding declarations remain OPEN. DTD and entity declarations are forbidden.
+
+The selected numeric profile requires declared sizes, offsets, lengths and computed exclusive extent ends to be below `2**63`, including image/filesystem coordinates. This is a tool range limit; the upstream XSD nonnegative-integer type itself is unbounded. Selected filesize/hashdigest values must be scalar leaf content. Unknown attributes and namespace extensions remain OPEN.
 
 Input limit: 16 MiB. Record limit: 100,000. Additional format-specific limits are enforced in the source.
 

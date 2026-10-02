@@ -82,3 +82,39 @@ class Tests(unittest.TestCase):
             "FAIL",
         )
         self.assertEqual(inspect(D.replace(b'len="4"', b'len="0"'))["status"], "PASS")
+
+    def test_selected_scalar_nodes_cannot_hide_children(self):
+        for old, new in ((b"</filesize>", b"<filesize>bad</filesize></filesize>"), (b"</hashdigest>", b'<hashdigest type="sha256">bad</hashdigest></hashdigest>')):
+            result = inspect(D.replace(old, new))
+            self.assertEqual(result["status"], "FAIL")
+            self.assertFalse(result["complete"])
+
+    def test_physical_extent_computed_end_limit(self):
+        for attribute in (b"img_offset", b"fs_offset"):
+            raw = D.replace(b'img_offset="12"', attribute + b'="9223372036854775807"')
+            self.assertIn("physical_extent_range_limit", inspect(raw)["findings"])
+            raw = D.replace(b'img_offset="12"', attribute + b'="9223372036854775802"')
+            self.assertEqual(inspect(raw)["status"], "PASS")
+
+    def test_attributes_outside_selected_profile_open(self):
+        for old, new in ((b"<filesize>", b'<filesize xmlns:x="urn:unknown" x:facet="other">'), (b'<hashdigest type="sha256">', b'<hashdigest type="sha256" encoding="other">'), (b"<byte_runs>", b'<byte_runs unexpected="yes">')):
+            result = inspect(D.replace(old, new))
+            self.assertEqual(result["status"], "OPEN")
+            self.assertFalse(result["complete"])
+
+    def test_encoded_entity_declarations_rejected(self):
+        document = '<?xml version="1.0" encoding="UTF-16"?><!DOCTYPE dfxml [<!ENTITY size "4">]><dfxml xmlns="' + N + '" version="1.0"><fileobject><filesize>&size;</filesize></fileobject></dfxml>'
+        for encoding in ("utf-16-le", "utf-16-be", "utf-32-le", "utf-32-be", "utf-16"):
+            raw = document.replace("UTF-16", "UTF-32" if "32" in encoding else "UTF-16").encode(encoding)
+            result = inspect(raw)
+            self.assertEqual(result["status"], "FAIL", encoding)
+            self.assertFalse(result["complete"])
+
+    def test_utf8_declaration_bom_and_unsupported_encoding(self):
+        for prefix in (b'<?xml version="1.0" encoding="UTF-8"?>', b'\xef\xbb\xbf<?xml version="1.0" encoding="UTF-8"?>'):
+            self.assertEqual(inspect(prefix + D)["status"], "PASS")
+        for encoding in ("UTF-16", "UTF-7", "unknown-codec", "ISO-8859-1"):
+            raw = ('<?xml version="1.0" encoding="' + encoding + '"?>').encode() + D
+            result = inspect(raw)
+            self.assertEqual(result["status"], "OPEN")
+            self.assertFalse(result["complete"])

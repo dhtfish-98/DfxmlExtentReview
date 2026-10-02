@@ -61,9 +61,11 @@ def inspect(data):
 
 
 def read_local(path):
-    fd = os.open(
-        path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
-    )
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    nonblock = getattr(os, "O_NONBLOCK", None)
+    if not isinstance(nofollow, int) or not nofollow or not isinstance(nonblock, int) or not nonblock:
+        raise Unsupported("safe_local_read_flags_unavailable")
+    fd = os.open(path, os.O_RDONLY | nofollow | nonblock)
     try:
         info = os.fstat(fd)
         require(stat.S_ISREG(info.st_mode), "regular_file_required")
@@ -90,6 +92,8 @@ def main():
     args = parser.parse_args()
     try:
         report = inspect(read_local(args.input))
+    except Unsupported as exc:
+        report = {"status": "OPEN", "complete": False, "findings": [str(exc)]}
     except (OSError, Invalid):
         report = {
             "status": "FAIL",
@@ -109,10 +113,17 @@ NS = "http://www.forensicswiki.org/wiki/Category:Digital_Forensics_XML"
 
 def analyze(data):
     document = text(data)
+    require("\0" not in document, "non_utf8_xml_transport_or_nul")
     require(
         "<!DOCTYPE" not in document.upper() and "<!ENTITY" not in document.upper(),
         "xml_declaration_forbidden",
     )
+    declaration = document.lstrip("\ufeff")
+    if declaration.startswith("<?xml"):
+        header = declaration.partition("?>")[0]
+        encoding = re.search(r"\bencoding\s*=\s*(['\"])([^'\"]+)\1", header)
+        if encoding is not None and encoding.group(2).lower() not in ("utf-8", "utf8"):
+            raise Unsupported("xml_encoding_outside_utf8_profile")
     depth = nodes = 0
     try:
         for event, elem in ET.iterparse(io.BytesIO(data), events=("start", "end")):
@@ -134,6 +145,8 @@ def analyze(data):
     for element in root.iter():
         if not element.tag.startswith("{" + NS + "}"):
             unknown = True
+        if any(key.startswith("{") for key in element.attrib):
+            unknown = True
     for index, obj in enumerate(root.iter("{" + NS + "}fileobject"), 1):
         fields = {}
         for child in obj:
@@ -146,6 +159,9 @@ def analyze(data):
         size_elem = fields.get("filesize", [])
         size = None
         if size_elem:
+            require(not len(size_elem[0]), "filesize_must_be_scalar")
+            if size_elem[0].attrib:
+                unknown = True
             value = size_elem[0].text or ""
             require(
                 len(value) <= 19
@@ -157,6 +173,8 @@ def analyze(data):
         extents = []
         for group in fields.get("byte_runs", []):
             facet = group.attrib.get("facet", "data")
+            if set(group.attrib) - {"facet"}:
+                unknown = True
             if facet != "data":
                 unknown = True
                 continue
@@ -183,6 +201,11 @@ def analyze(data):
                 require(
                     end < 2**63 and (size is None or end <= size), "extent_exceeds_file"
                 )
+                require(
+                    all(numeric[key] + numeric["len"] < 2**63
+                        for key in ("img_offset", "fs_offset") if key in numeric),
+                    "physical_extent_range_limit",
+                )
                 require(len(extents) < MAX_RECORDS, "extent_limit")
                 if set(run.attrib) - {
                     "len",
@@ -203,6 +226,9 @@ def analyze(data):
         )
         digests = []
         for entry in fields.get("hashdigest", []):
+            require(not len(entry), "hashdigest_must_be_scalar")
+            if set(entry.attrib) - {"type"}:
+                unknown = True
             algorithm = (entry.attrib.get("type") or "").lower().replace("-", "")
             value = entry.text or ""
             sizes = {"md5": 32, "sha1": 40, "sha256": 64, "sha512": 128}
