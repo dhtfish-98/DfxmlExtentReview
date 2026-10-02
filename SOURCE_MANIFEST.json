@@ -1,0 +1,69 @@
+{
+  "source_repo": "dfxml-working-group/dfxml_schema",
+  "source_commit": "a80a8619d83ac23c7cd41bd9262be86fcebe3bd8",
+  "scope": "DFXML 1.x namespaced fileobject declaration checks: bounded XML elements/depth, entity/DTD rejection, singleton fields, bounded filesize/extents with overlap checks and hash declaration shapes.",
+  "license": "LicenseRef-Public-Domain",
+  "source_files": [
+    {
+      "path": "LICENSE.md",
+      "bytes": 468,
+      "lines": 3,
+      "sha256": "2c0b88ffe641275f0bcab30c5f48b9704fd45487e4b96998fd6233d0a67cc0af",
+      "url": "https://raw.githubusercontent.com/dfxml-working-group/dfxml_schema/a80a8619d83ac23c7cd41bd9262be86fcebe3bd8/LICENSE.md"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1396,
+      "lines": 16,
+      "sha256": "c367a11722ccc1d35010dd5dc4fa5bb524ff92916b672d0951b486cc473cb3e8",
+      "url": "https://raw.githubusercontent.com/dfxml-working-group/dfxml_schema/a80a8619d83ac23c7cd41bd9262be86fcebe3bd8/README.md"
+    },
+    {
+      "path": "dfxml.xsd",
+      "bytes": 40407,
+      "lines": 858,
+      "sha256": "df381b6b0d7a5cc6d3b44ab2cff4a35ed4fcece086c7ccf437a50a02d9633bf8",
+      "url": "https://raw.githubusercontent.com/dfxml-working-group/dfxml_schema/a80a8619d83ac23c7cd41bd9262be86fcebe3bd8/dfxml.xsd"
+    },
+    {
+      "path": "ref/dc.xsd",
+      "bytes": 4169,
+      "lines": 119,
+      "sha256": "6a2cd099fb449375e6554d6da475209985ee6c47fa51e23bc4941d0bc92f9ba6",
+      "url": "https://raw.githubusercontent.com/dfxml-working-group/dfxml_schema/a80a8619d83ac23c7cd41bd9262be86fcebe3bd8/ref/dc.xsd"
+    },
+    {
+      "path": "ref/xml.xsd",
+      "bytes": 5832,
+      "lines": 146,
+      "sha256": "a20d46f47bc925931ec19e4bcbedfbe4233a39b42bfa45a81077978442d21ccc",
+      "url": "https://raw.githubusercontent.com/dfxml-working-group/dfxml_schema/a80a8619d83ac23c7cd41bd9262be86fcebe3bd8/ref/xml.xsd"
+    }
+  ],
+  "new_runtime_files": [
+    "src/dfxmlextentreview/__init__.py",
+    "src/dfxmlextentreview/__main__.py",
+    "src/dfxmlextentreview/core.py"
+  ],
+  "source_license": "LicenseRef-Public-Domain",
+  "implementation_license": "MIT",
+  "implementation_files": [
+    {
+      "path": "src/dfxmlextentreview/__init__.py",
+      "sha256": "38582950d26e35b221eb5e109dc3283861d1300bcd8b1a0bef233bc8ff76a761",
+      "bytes": 49
+    },
+    {
+      "path": "src/dfxmlextentreview/__main__.py",
+      "sha256": "889f673c2145e28095264339dbb3be024859a0bd7242435c479850567be2fd49",
+      "bytes": 49
+    },
+    {
+      "path": "src/dfxmlextentreview/core.py",
+      "sha256": "fb158a5aa8b06a263417b44a2057cca404e97e4a9caa1c0508abd9b520a672fd",
+      "bytes": 7991
+    }
+  ],
+  "source_review": "The fixed XSD is a format source with local dc/xml schema imports. The new implementation does not resolve schemas or external entities at runtime and does not claim full XSD validation.",
+  "review_boundary": "Complete new runtime review; selected upstream format/entry-point review. Unselected upstream platform code is not claimed audited or rewritten."
+}

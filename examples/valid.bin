@@ -1,0 +1,1 @@
+<dfxml xmlns="http://www.forensicswiki.org/wiki/Category:Digital_Forensics_XML" version="1.0"><fileobject><filename>/synthetic/private</filename><filesize>4</filesize><hashdigest type="sha256">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</hashdigest><byte_runs><byte_run file_offset="0" img_offset="12" len="4"/></byte_runs></fileobject></dfxml>

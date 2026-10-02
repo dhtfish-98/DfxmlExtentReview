@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dfxmlextentreview"
+version = "1.0.0"
+description = "Bounded offline evidence review: DfxmlExtentReview"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_LICENSE.txt"]
+dependencies = []
+
+[project.scripts]
+dfxmlextentreview = "dfxmlextentreview.core:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
