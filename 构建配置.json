@@ -1,0 +1,35 @@
+{
+  "schema": "project-build-layout.v1",
+  "project": "DfxmlExtentReview",
+  "author": "dhtfish98",
+  "kind": "python",
+  "base_public_commit": "d48f568160c2f29036c2ffd7965be0d91a489123",
+  "restored_inputs": [
+    {
+      "original": "LICENSE",
+      "stored": "项目文档/LICENSE",
+      "sha256": "de926d6c22d9e061af6158b0f23146ce036bfb2a562f2f406acec2dc4bd8b298"
+    },
+    {
+      "original": "ORIGIN.md",
+      "stored": "项目文档/ORIGIN.md",
+      "sha256": "d9a2d2696c01b140777c73efc346b63f952cdd680103ce2cbd0931f615074cf2"
+    },
+    {
+      "original": "README.md",
+      "stored": "项目文档/README.md",
+      "sha256": "5ba56470030dc0e87df2c1b20a932e68642bc7df892806a3721c2b4e0d5a073b"
+    },
+    {
+      "original": "VALIDATION.md",
+      "stored": "项目文档/VALIDATION.md",
+      "sha256": "c2a9769941d1af20b3c821741269332e35b17c99aef6af236e30f71afbe42de6"
+    },
+    {
+      "original": "examples/README.md",
+      "stored": "项目文档/examples/README.md",
+      "sha256": "fcd63d060eba407e35474233d8bb92454a2bceeec2c23e608a5474e4a9e5b638"
+    }
+  ],
+  "platform_entries": []
+}
