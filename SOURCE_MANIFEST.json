@@ -66,7 +66,7 @@
   ],
   "source_review": "The fixed XSD is a format source with local dc/xml schema imports. The new implementation does not resolve schemas or external entities at runtime and does not claim full XSD validation.",
   "review_boundary": "Complete new runtime review; selected upstream format/entry-point review. Unselected upstream platform code is not claimed audited or rewritten.",
-  "current_reaudit": "REAUDIT_20261002.json",
-  "current_verification": "ATTRIBUTION_UPDATE_20261002.json",
+  "current_reaudit": "项目文档/REAUDIT_20261002.json",
+  "current_verification": "项目文档/ATTRIBUTION_UPDATE_20261002.json",
   "implementation_author": "dhtfish98"
 }
