@@ -2,7 +2,7 @@
 
 # DfxmlExtentReview
 
-New implementation author: **dhtfish98**. Current package version: **1.0.2**.
+New implementation author: **dhtfish98**. Current package version: **1.0.3**.
 
 Checks inconsistent exported forensic mappings; unsupported namespace extensions/facets/digests remain OPEN rather than being interpreted as verified evidence.
 
